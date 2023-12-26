@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
   --argc;
   ++argv;
   if (argc == 0) {
-    printf("Usage: ./parser <file.graphql>\n");
+    printf("Usage: ./parser <file.txt>\n");
     return 1;
   }
 
