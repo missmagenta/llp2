@@ -7,25 +7,51 @@
 #include <string.h>
 
 
+typedef enum {
+    STRING_LITERAL_NODE,
+    VARIABLE_VALUE_NODE,
+    VARIABLE_FILTER_MATCH_NODE,
+    RELATION_MATCH_NODE,
+    BOOL_LITERAL_NODE,
+    INT_LITERAL_NODE,
+    FLOAT_LITERAL_NODE,
+    FILTER_NODE,
+    FILTER_BY_PASS_NODE,
+    NOT_OPERATION_NODE,
+    AND_OPERATION_NODE,
+    OR_OPERATION_NODE,
+    PREDICATE_NODE,
+    ATTRIBUTE_LIST_NODE,
+    RETURN_EXPRESSION_NODE,
+    VARIABLE_PATTERN_MATCH_NODE,
+    ANY_VARIABLE_MATCH_NODE,
+    MATCH_EXPRESSION_NODE,
+    SET_EXPRESSION_NODE,
+    DELETE_EXPRESSION_NODE,
+    CREATE_EXPRESSION_NODE,
+    INODE,
+    REQUEST_NODE
+} NodeType;
+
 typedef struct INode {
-    void (*print)(struct INode* node, int level, FILE* out);
+    NodeType nodeType;
 } INode;
 
 typedef struct ExpressionNode {
     INode base;
-    void (*print)(struct INode* node, int level, FILE* out);
+    NodeType nodeType;
 } ExpressionNode;
 
 typedef struct ValueNode {
     INode base;
-    void (*print)(struct INode* node, int level, FILE* out);
+    NodeType nodeType;
 } ValueNode;
 
 typedef struct VariableValueNode {
     ValueNode base;
     char* VariableName;
     char* FieldName;
-    void (*print)(int level, const char* VariableName, const char* FieldName);
+    NodeType nodeType;
 } VariableValueNode;
 
 VariableValueNode* VariableValueNode_new(char* VName, char* FName);
@@ -33,7 +59,7 @@ VariableValueNode* VariableValueNode_new(char* VName, char* FName);
 typedef struct StringLiteralNode {
     ValueNode base;
     char* Value;
-    void (*print)(int level, const char* Value);
+    NodeType nodeType;
 } StringLiteralNode;
 
 StringLiteralNode* StringLiteralNode_new(char* Val);
@@ -41,7 +67,7 @@ StringLiteralNode* StringLiteralNode_new(char* Val);
 typedef struct BoolLiteralNode {
     ValueNode base;
     int Value;
-    void (*print)(int level, int Value);
+    NodeType nodeType;
 } BoolLiteralNode;
 
 BoolLiteralNode* BoolLiteralNode_new(int Val);
@@ -49,7 +75,7 @@ BoolLiteralNode* BoolLiteralNode_new(int Val);
 typedef struct IntLiteralNode {
     ValueNode base;
     int Value;
-    void (*print)(int level, int Value);
+    NodeType nodeType;
 } IntLiteralNode;
 
 IntLiteralNode* IntLiteralNode_new(int Value);
@@ -57,7 +83,7 @@ IntLiteralNode* IntLiteralNode_new(int Value);
 typedef struct FloatLiteralNode {
     ValueNode base;
     float Value;
-    void (*print)(int level, float Value);
+    NodeType nodeType;
 } FloatLiteralNode;
 
 FloatLiteralNode* FloatLiteralNode_new(float Val);
@@ -76,19 +102,20 @@ typedef struct FilterNode {
     ValueNode* RHS;
     ValueNode* LHS;
     FilterCheckOperation Operation;
-    void(*print)(int level, const char* Operation, const char* LHS, const char* RHS);
+    NodeType nodeType;
 } FilterNode;
 
 FilterNode* FilterNode_new(ValueNode* Left, ValueNode* Right, FilterCheckOperation Op);
 
 typedef struct LogicalExpressionNode {
     INode base;
+    NodeType nodeType;
 } LogicalExpressionNode;
 
 typedef struct FilterByPassNode {
     LogicalExpressionNode base;
     FilterNode* Wrapped;
-    void(*print)(int level, const char* Wrapped);
+    NodeType nodeType;
 } FilterByPassNode;
 
 FilterByPassNode* FilterByPassNode_new(FilterNode* F);
@@ -96,7 +123,7 @@ FilterByPassNode* FilterByPassNode_new(FilterNode* F);
 typedef struct NotOperationNode {
     LogicalExpressionNode base;
     LogicalExpressionNode* Operand;
-    void (*print)(int level, const char* Operand);
+    NodeType nodeType;
 } NotOperationNode;
 
 NotOperationNode* NotOperationNode_new(LogicalExpressionNode* Op);
@@ -105,18 +132,19 @@ typedef struct BinaryLogicalOperationNode {
     LogicalExpressionNode base;
     LogicalExpressionNode* RHS;
     LogicalExpressionNode* LHS;
+    NodeType nodeType;
 } BinaryLogicalOperationNode;
 
 typedef struct AndOperationNode {
     BinaryLogicalOperationNode base;
-    void (*print)(int level, const char* LHS, const char* RHS);
+    NodeType nodeType;
 } AndOperationNode;
 
 AndOperationNode* AndOperationNode_new(LogicalExpressionNode* Left, LogicalExpressionNode* Right);
 
 typedef struct OrOperationNode {
     BinaryLogicalOperationNode base;
-    void (*print)(int level, const char* LHS, const char* RHS);
+    NodeType nodeType;
 } OrOperationNode;
 
 OrOperationNode* OrOperationNode_new(LogicalExpressionNode* Left, LogicalExpressionNode* Right);
@@ -124,7 +152,7 @@ OrOperationNode* OrOperationNode_new(LogicalExpressionNode* Left, LogicalExpress
 typedef struct PredicateNode {
     INode base;
     LogicalExpressionNode* Body;
-    void(*print)(int level, const char* Body);
+    NodeType nodeType;
 } PredicateNode;
 
 
@@ -135,7 +163,7 @@ typedef struct AttributeListNode {
     char** AttrList;
     ValueNode** Values;
     int size;
-    void (*print)(int level, const char* AttrList);
+    NodeType nodeType;
 } AttributeListNode;
 
 AttributeListNode* AttributeListNode_new();
@@ -146,7 +174,7 @@ typedef struct VariableMatchNode {
     INode base;
     char* VariableName;
     char* SchemeName;
-    void (*print) (int level, const char* VariableName, const char* SchemeName);
+    NodeType nodeType;
 } VariableMatchNode;
 
 VariableMatchNode* VariableMatchNode_new(char* Var, char* Scheme);
@@ -154,7 +182,7 @@ VariableMatchNode* VariableMatchNode_new(char* Var, char* Scheme);
 typedef struct VariablePatternMatchNode {
     VariableMatchNode base;
     AttributeListNode* Pattern;
-    void (*print)(int level, const char* VariableName, const char* SchemeName, const char* Pattern);
+    NodeType nodeType;
 } VariablePatternMatchNode;
 
 VariablePatternMatchNode* VariablePatternMatchNode_new(char* Var, char* Scheme, AttributeListNode* AttrList);
@@ -162,7 +190,7 @@ VariablePatternMatchNode* VariablePatternMatchNode_new(char* Var, char* Scheme, 
 typedef struct VariableFilterMatchNode {
     VariableMatchNode base;
     PredicateNode* Predicate;
-    void (*print)(int level, const char* VariableName, const char* SchemeName, const char* Predicate);
+    NodeType nodeType;
 } VariableFilterMatchNode;
 
 VariableFilterMatchNode* VariableFilterMatchNode_new(char* Var, char* Scheme, PredicateNode* Filters);
@@ -177,7 +205,7 @@ typedef struct RelationMatchNode {
     INode base;
     char* VariableName;
     char* RelationName;
-    void (*print)(int level, const char* VariableName, const char* RelationName, const char* Direction);
+    NodeType nodeType;
     RelationDirection Direction;
 } RelationMatchNode;
 
@@ -188,7 +216,7 @@ typedef struct MatchExpressionNode {
     VariableMatchNode* LeftNode;
     VariableMatchNode* RightNode;
     RelationMatchNode* Relation;
-    void (*print)(int level, const char* LeftNode, const char* Relation, const char* RightNode);
+    NodeType nodeType;
 } MatchExpressionNode;
 
 MatchExpressionNode* MatchExpressionNode_new(VariableMatchNode* Node);
@@ -201,7 +229,7 @@ typedef struct ReturnExpressionNode {
     ExpressionNode base;
     ValueNode** Values;
     int size;
-    void (*print)(struct INode* node, int level, FILE* out);
+    NodeType nodeType;
 } ReturnExpressionNode;
 
 ReturnExpressionNode* ReturnExpressionNode_new();
@@ -212,7 +240,7 @@ typedef struct SetExpressionNode {
     ExpressionNode base;
     VariableValueNode* Dest;
     ValueNode* Src;
-    void (*print)(int level, const char* Dest, const char* Src);
+    NodeType nodeType;
 } SetExpressionNode;
 
 SetExpressionNode* SetExpressionNode_new(VariableValueNode* Destination, ValueNode* Source);
@@ -220,7 +248,7 @@ SetExpressionNode* SetExpressionNode_new(VariableValueNode* Destination, ValueNo
 typedef struct DeleteExpressionNode {
     ExpressionNode base;
     char* VariableName;
-    void(*print)(int level, const char* VariableName);
+    NodeType nodeType;
 } DeleteExpressionNode;
 
 DeleteExpressionNode* DeleteExpressionNode_new(char* Name);
@@ -230,7 +258,7 @@ typedef struct CreateExpressionNode {
     VariableMatchNode* LeftNode;
     VariableMatchNode* RightNode;
     RelationMatchNode* Relation;
-    void(*print)(int level, const char* LeftNode, const char* Relation, const char* RightNode);
+    NodeType nodeType;
 
 } CreateExpressionNode;
 
@@ -242,7 +270,9 @@ typedef struct RequestNode {
     INode base;
     ExpressionNode** Expressions;
     int size;
-    void (*print)(struct INode* node, int level, FILE* out);
+    NodeType nodeType;
+    int numChildren;
+    struct RequestNode** children;
 } RequestNode;
 
 RequestNode* RequestNode_new(ExpressionNode* Expr);

@@ -496,7 +496,7 @@ char *yytext;
     #include <string.h>
     #include <stdlib.h>
     #include <stdbool.h>
-    #include "src/lib/ast.h"
+    #include "D:/VT-3-year/low-level/llp2/src/lib/ast.h"
     #include "parser.tab.h"
     #define YY_NO_UNPUT 1
 
@@ -902,7 +902,7 @@ YY_RULE_SETUP
 case 31:
 YY_RULE_SETUP
 #line 60 "src/lib/parser/lexer.l"
-{return BOOL_LITERAL        ;}
+{yylval.boolean = strdup(yytext); return BOOL_LITERAL        ;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP

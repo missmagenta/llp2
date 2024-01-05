@@ -1,5 +1,5 @@
 %code requires {
-  #include "D:/VT-3-year/low-level/llp2/ast.h"
+  #include "D:/VT-3-year/low-level/llp2/src/lib/ast.h"
 }
 
 %{
@@ -8,7 +8,7 @@
     #include <math.h>
     #include <string.h>
     #include "parser.tab.h"
-    #include "D:/VT-3-year/low-level/llp2/ast.h"
+    #include "D:/VT-3-year/low-level/llp2/src/lib/ast.h"
     #include "src/lib/printer.h"
 
     extern void yyerror(const char *s);

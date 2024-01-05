@@ -75,7 +75,7 @@
     #include <math.h>
     #include <string.h>
     #include "parser.tab.h"
-    #include "src/lib/ast.h"
+    #include "D:/VT-3-year/low-level/llp2/src/lib/ast.h"
     #include "src/lib/printer.h"
 
     extern void yyerror(const char *s);
@@ -111,7 +111,7 @@
 /* Line 209 of yacc.c  */
 #line 1 "src/lib/parser/parser.y"
 
-  #include "src/lib/ast.h"
+  #include "D:/VT-3-year/low-level/llp2/src/lib/ast.h"
 
 
 
@@ -2012,7 +2012,7 @@ int main(int argc, char *argv[]) {
   --argc;
   ++argv;
   if (argc == 0) {
-    printf("Usage: ./parser <file.graphql>\n");
+    printf("Usage: ./parser <file.txt>\n");
     return 1;
   }
 

@@ -37,7 +37,7 @@
 /* Line 1676 of yacc.c  */
 #line 1 "src/lib/parser/parser.y"
 
-  #include "src/lib/ast.h"
+  #include "D:/VT-3-year/low-level/llp2/src/lib/ast.h"
 
 
 

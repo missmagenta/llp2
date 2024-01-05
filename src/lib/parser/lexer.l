@@ -6,7 +6,7 @@
     #include <string.h>
     #include <stdlib.h>
     #include <stdbool.h>
-    #include "D:/VT-3-year/low-level/llp2/ast.h"
+    #include "D:/VT-3-year/low-level/llp2/src/lib/ast.h"
     #include "parser.tab.h"
     #define YY_NO_UNPUT 1
 
@@ -57,7 +57,7 @@ COMMENT \/\/.*\n
 "]"                    {return RBRACKET            ;}
 "{"                    {return LBRACE              ;}
 "}"                    {return RBRACE              ;}
-"true"|"false"         {return BOOL_LITERAL        ;}
+"true"|"false"         {yylval.boolean = strdup(yytext); return BOOL_LITERAL        ;}
 {INTEGER}              {yylval.integer = atoi(yytext); return INT_LITERAL         ;}
 {FLOAT}                {yylval.real = atof(yytext);    return FLOAT_LITERAL       ;}
 {STRING}               {yylval.string = strdup(yytext);        return STRING_LITERAL      ;}
